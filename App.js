@@ -25,17 +25,28 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
 
 import ItemScreen from './src/screens/ItemScreen';
-import EditScreen from './src/screens/EditScreen';
+import CompletedScreen from './src/screens/CompletedScreen';
 
 import store from './src/store/index';
 import {Provider} from 'react-redux';
 
+const Stack = createStackNavigator();
+
+
 const App:  () => Node = () => {
   return (
     <Provider store={store}>
-      <ItemScreen />
+      <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={ItemScreen} />
+        <Stack.Screen name="Completed" component={CompletedScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
     </Provider>
   );
 };
