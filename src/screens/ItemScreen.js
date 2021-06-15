@@ -9,17 +9,27 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {connect, useDispatch} from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
-import {addItem} from '../actions/updateTodos';
+
 import ItemList from '../components/ItemList';
 
-const ItemScreen = props => {
+const ItemScreen = (props) => {
+  const navigation = useNavigation();
+
   const [text, setText] = useState ('');
   const dispatch = useDispatch ();
 
   return (
     <View>
       <Text style={styles.label}>Add Item</Text>
+      <TouchableOpacity onPress={() => {
+        navigation.navigate('Completed', { todos: props.todos });
+      }}>
+        <Text>Completed</Text>
+      </TouchableOpacity>
       <TextInput
         style={styles.input}
         value={text}
@@ -32,7 +42,11 @@ const ItemScreen = props => {
           onPress={() =>
             dispatch ({
               type: 'ADD_ITEM',
-              payload: {id: text + new Date ().getTime (), text},
+              payload: {
+                id: text + new Date ().getTime (),
+                text,
+                completed: false,
+              },
             })}
         />
       </TouchableOpacity>
@@ -41,7 +55,7 @@ const ItemScreen = props => {
         data={props.todos}
         keyExtractor={item => item.id}
         renderItem={({item}) => {
-          return <ItemList item={item} id={item.id} />;
+          return !item.completed ? <ItemList item={item} id={item.id} /> : null;
         }}
       />
     </View>
