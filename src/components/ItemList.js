@@ -1,17 +1,73 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  ScrollView
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {connect} from 'react-redux';
 
+import {todos} from '../reducers/todos';
+import EditAndSave from './EditAndSave';
+
 const ItemList = ({item}) => {
   const dispatch = useDispatch ();
+
+  console.log(item);
+  const [text, setText] = useState (item.text);
+  const [editEnabeled, setEditEnabeled] = useState (null);
+
   return (
     <View style={styles.item}>
-      <Text>{item.text}</Text>
-
-      <TouchableOpacity title="Edit" color="grey" style={styles.edit}>
-        <Text>{'Edit'}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          dispatch ({
+            type: 'COMPLETED_ITEM',
+            payload: {
+              id: item.id,
+              completed: !item.completed,
+            },
+          });
+        }}
+      >
+    
+      <TextInput
+          style={{
+            textDecorationLine: item.completed ? 'line-through' : 'none',
+            fontSize: 24,
+          }}
+          editable={editEnabeled ? true : false}
+          value={text}
+          onChangeText={statment => setText (statment)}
+        /> 
+    
       </TouchableOpacity>
+
+      {editEnabeled
+        ? <EditAndSave
+            title="Save"
+            text="Save"
+            color="blue"
+            onPress={() => {
+              dispatch ({
+                type: 'UPDATE_ITEM',
+                payload: {id: item.id, text: text, completed: item.completed},
+              });
+              setEditEnabeled (false);
+            }}
+          />
+        : <EditAndSave
+            title="Edit"
+            text="Edit"
+            color="grey"
+            onPress={() => {
+              setEditEnabeled (true);
+            }}
+          />}
+
       <TouchableOpacity
         title="Delete"
         color="red"
@@ -46,7 +102,7 @@ const styles = StyleSheet.create ({
     padding: 7,
     justifyContent: 'center',
     alignItems: 'center',
-    marginStart: 1,
+    marginStart: 10,
   },
   edit: {
     width: 70,
@@ -54,7 +110,7 @@ const styles = StyleSheet.create ({
     padding: 7,
     justifyContent: 'center',
     alignItems: 'center',
-    marginStart: 20,
+    marginStart: 190,
   },
 });
 
